@@ -16,6 +16,10 @@ export class UsersService {
         return await this.userModel.findById({_id:id}).exec()
     }
 
+    async getByEmail(email:string){
+        return await this.userModel.findOne({email:email}).exec()
+    }
+
     async create(user:User){
         const receivedUser = new this.userModel(user)
         let hashPassword = hashSync(receivedUser.password,10)

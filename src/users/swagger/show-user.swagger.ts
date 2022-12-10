@@ -6,7 +6,7 @@ export class ShowUserSwagger
     _id:string
 
     @ApiProperty()
-    name:string
+    email:string
 
     @ApiPropertyOptional()
     password:string

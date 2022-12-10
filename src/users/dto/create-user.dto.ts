@@ -6,7 +6,7 @@ export class CreateUserDto
 {
     @IsNotEmpty()
     @ApiProperty({default:'name user'})
-    name: string;
+    email: string;
 
     @IsNotEmpty()
     // @Matches(Regex expression, {message:'A senha deve conter ...'})
