@@ -1,8 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { User } from './shared/user';
 import { UsersService } from './users.service';
-import { ApiTags } from '@nestjs/swagger'
-
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserQueryDto } from './dto/user-query.dto';
+import { ShowUserSwagger } from './swagger/show-user.swagger';
+import { CreateUserSwagger } from './swagger/create-user.swagger';
+import { UpdateUserSwagger } from './swagger/update-user.swagger';
+import { BadRequestSwagger } from './swagger/bad-request.swagger';
+import { NotFundSwagger } from './swagger/not-found.swagger';
 @Controller('api/users')
 @ApiTags('Users')
 export class UsersController {
@@ -10,28 +17,47 @@ export class UsersController {
     constructor(private readonly usersService:UsersService){}
 
     @Get()
-    async getAll() : Promise<User[]> {
-        return this.usersService.getAll();
+    @ApiOperation({summary:'Get all Users'})
+    @ApiResponse({
+        status:200 , 
+        description: 'Get all Users', 
+        type: ShowUserSwagger,
+        isArray:true
+    })
+    async getAll(@Query() query: UserQueryDto) : Promise<User[]> {
+        return await this.usersService.getAll();
     }
 
     @Get(':id')
+    @ApiOperation({summary:'Get users by Id'})
+    @ApiResponse({status:200, description: 'User found',type: ShowUserSwagger})
+    @ApiResponse({status:404, description: 'User not found', type: NotFundSwagger})
     async getById( @Param('id') id:string ) : Promise<User> {
-        return this.usersService.getById(id)
+        return await this.usersService.getById(id)
     }
 
     @Post()
-    async create ( @Body() user:User ) : Promise <User> {
-        return this.usersService.create(user);
+    @ApiOperation({summary:'Create a new user'})
+    @ApiResponse({status:201, description: 'User created succesfully', type: CreateUserSwagger})
+    @ApiResponse({status:400, description: 'Invalid Parameters', type: BadRequestSwagger})
+    async create ( @Body() body: CreateUserDto ) : Promise <User> {
+        return await this.usersService.create(body);
     }
 
-    @Put(':id')
-    async update ( @Param('id') id:string, @Body() user:User ) : Promise <User> {
-        return this.usersService.update(id,user)
+    @Patch(':id')
+    @ApiOperation({summary:'Update a user'})
+    @ApiResponse({status:200 , description: 'User updated succesfully', type: UpdateUserSwagger})
+    @ApiResponse({status:404 , description: 'User not found',type: NotFundSwagger})
+    async update ( @Param('id') id:string, @Body() body:UpdateUserDto ) : Promise <User> {
+        return await this.usersService.update(id,body)
     }
 
     @Delete(':id')
+    @ApiOperation({summary:'Delete a user'})
+    @ApiResponse({status:204 , description: 'User deleted succesfully'})
+    @ApiResponse({status:404 , description: 'User not found',type: NotFundSwagger})
     async delete ( @Param('id') id:string ) {
-        return this.usersService.delete(id);
+        return await this.usersService.delete(id);
     } 
 
 }
