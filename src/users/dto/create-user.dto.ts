@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsIn, IsNotEmpty } from 'class-validator'
+import { IsIn, IsNotEmpty, Matches } from 'class-validator'
 
 
 export class CreateUserDto 
@@ -9,6 +9,7 @@ export class CreateUserDto
     name: string;
 
     @IsNotEmpty()
-    @ApiPropertyOptional({default:'password user'})
+    // @Matches(Regex expression, {message:'A senha deve conter ...'})
+    @ApiProperty({default:'password user'})
     password: string;
 }
