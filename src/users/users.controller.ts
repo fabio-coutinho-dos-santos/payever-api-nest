@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { User } from './shared/user';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -10,10 +10,12 @@ import { CreateUserSwagger } from './swagger/create-user.swagger';
 import { UpdateUserSwagger } from './swagger/update-user.swagger';
 import { BadRequestSwagger } from './swagger/bad-request.swagger';
 import { NotFundSwagger } from './swagger/not-found.swagger';
+import { AuthGuard } from '@nestjs/passport';
+
+@UseGuards(AuthGuard('jwt'))
 @Controller('api/users')
 @ApiTags('Users')
 export class UsersController {
-
     constructor(private readonly usersService:UsersService){}
 
     @Get()
