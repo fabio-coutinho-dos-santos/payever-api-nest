@@ -10,6 +10,7 @@ async function bootstrap() {
     .setTitle('Invite API')
     .setDescription('')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/doc', app, document);
