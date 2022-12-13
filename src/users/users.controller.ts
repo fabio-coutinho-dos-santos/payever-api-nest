@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { User } from './shared/user';
 import { UsersService } from './users.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
@@ -10,10 +10,14 @@ import { CreateUserSwagger } from './swagger/create-user.swagger';
 import { UpdateUserSwagger } from './swagger/update-user.swagger';
 import { BadRequestSwagger } from './swagger/bad-request.swagger';
 import { NotFundSwagger } from './swagger/not-found.swagger';
+import { AuthGuard } from '@nestjs/passport';
+
+@UseGuards(AuthGuard('jwt'))
 @Controller('api/users')
 @ApiTags('Users')
-export class UsersController {
+@ApiBearerAuth()
 
+export class UsersController {
     constructor(private readonly usersService:UsersService){}
 
     @Get()
@@ -34,6 +38,14 @@ export class UsersController {
     @ApiResponse({status:404, description: 'User not found', type: NotFundSwagger})
     async getById( @Param('id') id:string ) : Promise<User> {
         return await this.usersService.getById(id)
+    }
+
+    @Get(':email')
+    @ApiOperation({summary:'Get users by email'})
+    @ApiResponse({status:200, description: 'User found',type: ShowUserSwagger})
+    @ApiResponse({status:404, description: 'User not found', type: NotFundSwagger})
+    async getByEmail( @Param('email') email:string ) : Promise<User> {
+        return await this.usersService.getById(email)
     }
 
     @Post()
