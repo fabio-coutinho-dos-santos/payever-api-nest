@@ -9,7 +9,8 @@ export class UsersService {
     constructor( @InjectModel('User') private readonly userModel: Model<User> ){}
 
     async getAll(){
-        return await this.userModel.find().exec()
+        // return await this.userModel.find().exec()
+        return await this.userModel.find().skip(5).limit(2)
     }
 
     async getById(id:string){
