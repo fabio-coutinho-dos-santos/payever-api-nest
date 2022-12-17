@@ -9,8 +9,8 @@ export class UsersService {
     constructor( @InjectModel('User') private readonly userModel: Model<User> ){}
 
     async getAll(){
-        // return await this.userModel.find().exec()
-        return await this.userModel.find().skip(5).limit(2)
+        return await this.userModel.find().exec()
+        // return await this.userModel.find().skip(5).limit(2)
     }
 
     async getById(id:string){
@@ -29,6 +29,8 @@ export class UsersService {
     }
 
     async update(id:string, user:User){
+        let hashPassword = hashSync(user.password,10)
+        user.password = hashPassword;
         await this.userModel.updateOne({_id:id},user).exec();
         return this.getById(id);
     }
