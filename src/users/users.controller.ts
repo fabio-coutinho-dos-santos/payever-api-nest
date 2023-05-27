@@ -28,7 +28,7 @@ export class UsersController {
         type: ShowUserSwagger,
         isArray:true
     })
-    async getAll(@Query() query: UserQueryDto) : Promise<User[]> {
+    async getAll() : Promise<User[]> {
         return await this.usersService.getAll();
     }
 
@@ -56,20 +56,20 @@ export class UsersController {
         return await this.usersService.create(body);
     }
 
-    @Patch(':id')
+    @Patch(':uuid')
     @ApiOperation({summary:'Update a user'})
     @ApiResponse({status:200 , description: 'User updated succesfully', type: UpdateUserSwagger})
-    @ApiResponse({status:404 , description: 'User not found',type: NotFundSwagger})
-    async update ( @Param('id') id:string, @Body() body:UpdateUserDto ) : Promise <User> {
-        return await this.usersService.update(id,body)
+    @ApiResponse({status:404 , description: 'User not found', type: NotFundSwagger})
+    async update ( @Param('uuid') uuid:string, @Body() body:UpdateUserDto ) : Promise <User> {
+        return await this.usersService.update(uuid,body)
     }
 
-    @Delete(':id')
+    @Delete(':uuid')
     @ApiOperation({summary:'Delete a user'})
     @ApiResponse({status:204 , description: 'User deleted succesfully'})
-    @ApiResponse({status:404 , description: 'User not found',type: NotFundSwagger})
-    async delete ( @Param('id') id:string ) {
-        return await this.usersService.delete(id);
+    @ApiResponse({status:404 , description: 'User not found', type: NotFundSwagger})
+    async delete ( @Param('uuid') uuid:string ) {
+        return await this.usersService.delete(uuid);
     } 
 
 }

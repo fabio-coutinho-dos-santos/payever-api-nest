@@ -36,12 +36,14 @@ export class UsersService {
         
     }
 
-    async update(id:string, user:User){
-        return await this.usersRepository.update({_id: id}, user)
+    async update(uuid:string, user:User){
+        const userStored: any = await this.getById(uuid);
+        return await this.usersRepository.update({_id: userStored._id}, user)
     }
 
-    async delete(id){
-        return this.usersRepository.deleteMany({_id: id});
+    async delete(uuid){
+        const userStored: any = await this.getById(uuid);
+        return await this.usersRepository.deleteMany({_id: userStored._id});
     }
 
 }
