@@ -12,4 +12,8 @@ export class CreateUserDto
     // @Matches(Regex expression, {message:'A senha deve conter ...'})
     @ApiProperty({default:'password user'})
     password: string;
+
+    @IsNotEmpty()
+    @ApiProperty()
+    favoriteBrands: string[];
 }
