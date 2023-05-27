@@ -32,11 +32,11 @@ export class UsersController {
         return await this.usersService.getAll();
     }
 
-    @Get(':id')
-    @ApiOperation({summary:'Get users by Id'})
+    @Get(':uuid')
+    @ApiOperation({summary:'Get users by uuid'})
     @ApiResponse({status:200, description: 'User found',type: ShowUserSwagger})
     @ApiResponse({status:404, description: 'User not found', type: NotFundSwagger})
-    async getById( @Param('id') id:string ) : Promise<User> {
+    async getById( @Param('uuid') id:string ) : Promise<User> {
         return await this.usersService.getById(id)
     }
 
