@@ -38,7 +38,7 @@ export class UsersService {
 
     async update(uuid:string, user:User){
         const userStored: any = await this.getById(uuid);
-        return await this.usersRepository.update({_id: userStored._id}, user)
+        return await this.usersRepository.findOneAndUpdate({_id: userStored._id}, user)
     }
 
     async delete(uuid){
