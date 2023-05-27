@@ -8,7 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb+srv://invite-user:3x4InHbvYb1MJVtU@cluster0.h2xgqsh.mongodb.net/nestjs-invite?retryWrites=true&w=majority'),
+    MongooseModule.forRoot(`mongodb+srv://${process.env.MONGO_DB_NAME_TEST}:${process.env.MONGO_DB_PASSWORD_TEST}@${process.env.MONGO_DB_CLUSTER_TEST}.iboevg3.mongodb.net/nestjs-invite?retryWrites=true&w=majority`),
     UsersModule,
     AuthModule,
   ],
