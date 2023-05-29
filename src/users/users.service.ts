@@ -1,12 +1,25 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { User } from './schema/user.schema'
+import { User, UserDocument } from './schema/user.schema'
 import { hashSync } from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import { UsersRepository } from './users.repository';
+import { Model, PaginateOptions, PaginateModel } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
 export class UsersService {
 
-    constructor(private readonly usersRepository: UsersRepository){}
+    constructor(
+        private readonly usersRepository: UsersRepository,
+        @InjectModel(User.name) private usersModel: Model<UserDocument>
+        ){}
+
+
+    async paginate(options: PaginateOptions) {
+        return await (this.usersModel as PaginateModel<UserDocument>).paginate(
+        {},
+        options,
+        );
+    }
 
     async getAll(){
         return await this.usersRepository.find();
@@ -31,7 +44,7 @@ export class UsersService {
             user.userUuid = uuidv4();
             return await this.usersRepository.create(user)
         }catch(e){
-            throw new InternalServerErrorException(e)
+            throw new InternalServerErrorException('Error on create a new user')
         }
         
     }

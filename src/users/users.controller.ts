@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,8 +28,16 @@ export class UsersController {
         type: ShowUserSwagger,
         isArray:true
     })
-    async getAll() : Promise<User[]> {
-        return await this.usersService.getAll();
+    getAll(
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+    ) {
+        return this.usersService.paginate({
+                page:page,
+                limit:limit,
+                sort: { email: 1},
+            }
+        );
     }
 
     @Get(':uuid')
