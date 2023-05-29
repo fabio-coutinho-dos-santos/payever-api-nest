@@ -1,24 +1,15 @@
-// import * as mongoose from  'mongoose';
-
-// export const UserSchema = new mongoose.Schema({
-//     email: String,
-//     password: String,
-// },{
-//     timestamps: true
-// })
-
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 
 export type UserDocument = User & Document
-
 @Schema({timestamps: true})
 export class User
 {
-    @Prop()
+    @Prop({unique:true})
     userUuid?: string;
 
-    @Prop()
+    @Prop({unique:true})
     email: string;
 
     @Prop()
@@ -29,3 +20,4 @@ export class User
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.plugin(mongoosePaginate);
