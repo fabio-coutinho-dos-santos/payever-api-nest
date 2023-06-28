@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../users/users.module';
 import { AuthService } from './auth.service';
@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { AuthController } from './auth.controller';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtMiddleware } from 'src/midlewares/JwtMiddleware';
 
 @Module({
   imports:[
@@ -21,4 +22,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController]
 })
-export class AuthModule {}
+export class AuthModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(JwtMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

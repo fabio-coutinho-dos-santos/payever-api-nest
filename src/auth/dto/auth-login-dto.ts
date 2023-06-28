@@ -1,8 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsArray, IsEmail, IsIn, IsNotEmpty, Matches } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsEmail, IsNotEmpty, Matches } from 'class-validator'
 
 
-export class CreateUserDto 
+export class AuthLoginDto 
 {
     @IsNotEmpty()
     @IsEmail()
@@ -13,9 +13,4 @@ export class CreateUserDto
     // @Matches(new RegExp(/([0-9][0-9][0-9][0-9][0-9])/), {message:'Password should have only numbers and at least size = 5'})
     @ApiProperty({default:'passwordTest'})
     password: string;
-
-    @IsNotEmpty()
-    @IsArray()
-    @ApiProperty({default:['nike']})
-    favoriteBrands: string[];
 }
