@@ -18,7 +18,14 @@ import { RabbitmqProvider } from 'src/providers/RabbitmqProvider';
 @Injectable()
 export class UsersService {
 
-    private NEXT_INDEX_AFTER_REQURES_REGISTERS=13
+    private NEXT_INDEX_AFTER_REQURES_REGISTERS = 13
+    private USER_NOT_FOUND_MESSSAGE = 'User not found';
+    private ERROR_ON_GET_USER_AVATAR = 'Error on get user avatar'
+    private INTERNAL_SERVER_ERROR_MESSAGE = 'Internal Server Error'
+    private ERROR_ON_CREATE_NEW_USER_MESSAGE = 'Error on create a new user'
+    private REQRES_BASE_URL = 'https://reqres.in/api/users'
+    private UPLOAD_FOLDER_PATH = './uploads';
+    private STATUS_CODE_NOT_FOUND = 404;
 
     constructor(
         private readonly usersRepository: UsersRepository,
@@ -29,17 +36,17 @@ export class UsersService {
 
         try{
             const user = await this.usersRepository.findOne({id});
-            if(!user) throw new NotFoundException('User not found');
+            if(!user) throw new NotFoundException(this.USER_NOT_FOUND_MESSSAGE);
             return omit(user.toJSON(), '__v', '_id')
         }catch(e){
-            if(e.status == 404){
+            if(e.status == this.STATUS_CODE_NOT_FOUND){
                 try{
                     return await this.getUserInReqresServer(id)
                 }catch(e){
-                    if(e.response.status == 404){
-                        throw new NotFoundException('User not found'); 
+                    if(e.response.status == this.STATUS_CODE_NOT_FOUND){
+                        throw new NotFoundException(this.USER_NOT_FOUND_MESSSAGE); 
                     }else{
-                        throw new InternalServerErrorException('Error on get user avatar')
+                        throw new InternalServerErrorException(this.ERROR_ON_GET_USER_AVATAR)
                     }
                 }
             }
@@ -47,8 +54,7 @@ export class UsersService {
     }
 
     async getUserInReqresServer(id){
-        const userInReqIn = await axios.get(`https://reqres.in/api/users/${id}`);
-        console.log(userInReqIn.status);
+        const userInReqIn = await axios.get(`${this.REQRES_BASE_URL}/${id}`);
         if(userInReqIn) return userInReqIn.data.data;
     }
 
@@ -73,7 +79,7 @@ export class UsersService {
             
         }catch(e){
             console.log(e);
-            throw new InternalServerErrorException('Error on create a new user')
+            throw new InternalServerErrorException(this.ERROR_ON_CREATE_NEW_USER_MESSAGE)
         }
     }
 
@@ -128,8 +134,7 @@ export class UsersService {
 
     async storeImage(image, userId, hash){
         return new Promise((resolve, reject) => {
-            const destinationFolder = './uploads';
-            const filePath = `${destinationFolder}/${userId}-${hash}.png`;
+            const filePath = `${this.UPLOAD_FOLDER_PATH}/${userId}-${hash}.png`;
             const writeStream = fs.createWriteStream(filePath);
             writeStream.write(image);
             writeStream.end();
@@ -139,8 +144,7 @@ export class UsersService {
             });
 
             writeStream.on('error', (error) => {
-                console.log('erro ao gravar imagem')
-                console.log(error)
+                console.error(error)
                 reject(error)
             });
         })
@@ -157,18 +161,18 @@ export class UsersService {
         try{
             return await this.getAvatarUserFromDatabase(id)
         }catch(e){
-            if(e.response.statusCode == 404){
+            if(e.response.statusCode == this.STATUS_CODE_NOT_FOUND){
                 try{
                     return await this.getAvatarUserFromReqresServer(id)
                 }catch(e){
-                    if(e.response.statusCode == 404){
-                        throw new NotFoundException('User not found'); 
+                    if(e.response.status == this.STATUS_CODE_NOT_FOUND){
+                        throw new NotFoundException(this.USER_NOT_FOUND_MESSSAGE); 
                     }else{
-                        throw new InternalServerErrorException('Error on get user avatar')
+                        throw new InternalServerErrorException(this.ERROR_ON_GET_USER_AVATAR)
                     }
                 }
            }else{
-                throw new InternalServerErrorException('Error on get user avatar')
+                throw new InternalServerErrorException(e.getMessage())
            }
         }
     }
@@ -176,11 +180,11 @@ export class UsersService {
     async getAvatarUserFromDatabase(id){
         const user = await this.usersRepository.findOne({id});
         if(user){
-            const imageBuffer = await this.readImage('./uploads/'+user.avatar+'.png');
+            const imageBuffer = await this.readImage(this.UPLOAD_FOLDER_PATH + '/' + user.avatar + '.png');
             const base64String = imageBuffer.toString('base64');
             return {avatarContent: base64String};
         }else{
-            throw new NotFoundException('User not found in database')
+            throw new NotFoundException(this.USER_NOT_FOUND_MESSSAGE)
         }
     }
 
@@ -195,12 +199,12 @@ export class UsersService {
                 const image = await axios.get(avatarPath);
                 const imageBuffer = Buffer.from(image.data, 'binary');
                 await this.storeImage(imageBuffer, user.id.toString(), hash);
-                const imageLocal = await this.readImage('./uploads/'+user.id+"-"+hash+'.png');
+                const imageLocal = await this.readImage(this.UPLOAD_FOLDER_PATH + "/" + user.id+ "-" + hash + '.png');
                 const base64String = imageLocal.toString('base64');
                 return {avatarContent: base64String};
             }catch(e){
                 console.log(e)
-                throw new InternalServerErrorException('Internal Server Error')
+                throw new InternalServerErrorException(this.INTERNAL_SERVER_ERROR_MESSAGE)
             }
         }
     }
@@ -220,9 +224,9 @@ export class UsersService {
     async delete(id){
         const userStored = await this.usersRepository.findOne({id});
         if(!userStored){
-            throw new NotFoundException('User not found');
+            throw new NotFoundException(this.USER_NOT_FOUND_MESSSAGE);
         }else{
-            const avatarPath = "./uploads/" + userStored.avatar + '.png'
+            const avatarPath = this.UPLOAD_FOLDER_PATH + "/" + userStored.avatar + '.png'
             const userDeleted = await this.usersRepository.deleteMany({id: userStored.id});
             try{
                 const avatarDeleted = await this.eraseImage(avatarPath);
