@@ -21,7 +21,7 @@ describe('UsersService', () => {
 
     usersService = module.get<UsersService>(UsersService);
     usersRepository = module.get<UsersRepository>(UsersRepository);
-    userUuidFilter = {userUuid: userStub().userUuid}
+    userUuidFilter = {id: userStub().id}
     jest.clearAllMocks();
   });
 
@@ -86,15 +86,45 @@ describe('UsersService', () => {
       })
 
       test('then should return a user', () => {
-        let comparison = compareSync(userStub().password, user.password)
         expect(user.email).toEqual(userStub().email)
-        expect(user.userUuid).toEqual(userStub().userUuid)
-        expect(user.favoriteBrands).toEqual(userStub().favoriteBrands)
-        expect(comparison).toEqual(true)
+        expect(user.id).toEqual(userStub().id)
+        expect(user.avatar).toEqual(userStub().avatar)
+        expect(user.first_name).toEqual(userStub().first_name)
+        expect(user.first_name).toEqual(userStub().first_name)
       })
 
      })
   })
+
+  describe('findLast', () => {
+    
+    describe('when findLast is called', () => {
+
+      let user: User;
+      let updateUserDto: any = {
+        password: 'teste',
+        favoriteBrands: ['coca-cola']
+      }
+
+      beforeEach( async () => {
+        user = await usersRepository.findLast();
+      })
+      
+      test('then should call the usersRepository', () => {
+        expect(usersRepository.findLast).toHaveBeenCalledWith();
+      })
+
+      test('then should return a user', () => {
+        expect(user.email).toEqual(userStub().email)
+        expect(user.id).toEqual(userStub().id)
+        expect(user.avatar).toEqual(userStub().avatar)
+        expect(user.first_name).toEqual(userStub().first_name)
+        expect(user.first_name).toEqual(userStub().first_name)
+      })
+
+     })
+  })
+
 
   describe('create', () => {
     
