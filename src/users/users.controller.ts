@@ -42,11 +42,11 @@ export class UsersController {
         return await this.usersService.create(body, image);
     }
 
-    @Delete(':id')
+    @Delete(':id/avatar')
     @ApiOperation({summary:'Delete a user'})
     @ApiResponse({status:204 , description: 'User deleted succesfully'})
     @ApiResponse({status:404 , description: 'User not found', type: NotFundSwagger})
-    async delete ( @Param('id') id:string ) {
+    async delete ( @Param('id') id:number ) {
         return await this.usersService.delete(id);
     } 
 

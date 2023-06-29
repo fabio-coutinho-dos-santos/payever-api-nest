@@ -161,8 +161,35 @@ export class UsersService {
       }
 
     async delete(id){
-        const userStored: any = await this.getById(id);
-        return await this.usersRepository.deleteMany({_id: userStored._id});
+        const userStored = await this.usersRepository.findOne({id});
+        if(!userStored){
+            throw new NotFoundException('User not found');
+        }else{
+            const avatarPath = "./uploads/" + userStored.avatar + '.png'
+            const userDeleted = await this.usersRepository.deleteMany({id: userStored.id});
+            try{
+                const avatarDeleted = await this.eraseImage(avatarPath);
+                return{
+                    avatarDeleted: avatarDeleted,
+                    userDeleted: userDeleted
+                }
+            }catch(e){
+                return{
+                    avatarDeleted: false,
+                    userDeleted: userDeleted
+                }
+            }
+        }
     }
 
+    async eraseImage(path){
+        return new Promise((resolve, reject)=>{
+            fs.unlink(path, (err) => {
+                if (err) {
+                    reject(false)
+                }
+                resolve(true)
+                });
+        })
+    }
 }
