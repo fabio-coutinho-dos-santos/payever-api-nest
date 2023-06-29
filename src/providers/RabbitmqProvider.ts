@@ -1,4 +1,3 @@
-import { InternalServerErrorException } from "@nestjs/common";
 import { Connection, Channel, connect, Message } from "amqplib";
 
 export class RabbitmqProvider{

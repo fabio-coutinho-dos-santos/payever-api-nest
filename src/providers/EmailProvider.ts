@@ -1,5 +1,4 @@
-const nodemailer = require('nodemailer');
-        
+import * as nodemailer from 'nodemailer'
 
 export class EmailProvider
 {

@@ -1,5 +1,4 @@
-import { Document, Model, FilterQuery, UpdateQuery } from 'mongoose'
-import { User } from 'src/users/schema/user.schema';
+import { Document, Model, FilterQuery } from 'mongoose'
 import { hashSync } from 'bcrypt'
 
 export abstract class EntityRepository <T extends Document>{
