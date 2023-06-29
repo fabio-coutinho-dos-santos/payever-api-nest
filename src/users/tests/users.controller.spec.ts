@@ -5,6 +5,7 @@ import { User } from '../schema/user.schema';
 import { UsersController } from '../users.controller';
 import { UsersService } from '../users.service';
 import { userStub } from './stubs/user.stub';
+import { avatarStub } from './stubs/avatar.stub';
 
 jest.mock('../users.service');
 
@@ -21,126 +22,87 @@ describe('UsersController', () => {
     usersController = module.get<UsersController>(UsersController);
     usersServices = module.get<UsersService>(UsersService);
     jest.clearAllMocks();
-  });
+  })
 
- 
   describe('getUser', () => {
-    describe('when getUserByUuid is called', () => {
-
-      let user: User;
+    describe('when getUserById is called', () => {
+  
+      let user: any;
       beforeEach(async () => {
-        user = await usersController.getById(userStub().userUuid)
+        user = await usersController.getById(userStub().id)
       })
-
+  
       test('then it should call usersService', () => {
-        expect(usersServices.getById).toBeCalledWith(userStub().userUuid);
+        expect(usersServices.getById).toBeCalledWith(userStub().id);
       })
-
+  
       test('then should return a user', () => {
         expect(user).toEqual(userStub())
       })
     })
+})
 
-    describe('when getUserByEmail is called' , () => {
+describe('getUserAvatar', () => {
+  describe('when getUserAvatar is called', () => {
 
-      let user;
+    let avatarContent: any;
+    beforeEach(async () => {
+      avatarContent = await usersController.getAvatar(userStub().id)
+    })
 
-      beforeEach(async () => {
-        user = await usersServices.getByEmail(userStub().email)
-      })
+    test('then it should call usersService', () => {
+      expect(usersServices.getUserAvatar).toBeCalledWith(userStub().id);
+    })
 
-      test('then it should call userService' , () => {
-        expect(usersServices.getByEmail).toBeCalledWith(userStub().email);
-      })
-
-      test('then should return a user', () => {
-        expect(user).toEqual(userStub())
-      })
-
+    test('then should a content in base64', () => {
+      expect(avatarContent).toEqual(avatarStub)
     })
   })
+})
 
-  describe('getUsers', () => {
-    describe('when getUsers is called', () => {
-      let users: User[];
+describe('createUser', () => {
+  describe('when create user is called' , () => {
 
-      beforeEach(async () => {
-        users = await usersController.getAll();
-        console.log(users);
-      })
+    let user:User
+    let image: any
+    let createUserDto: CreateUserDto
 
-      test('then it should call usersService', () => {
-        expect(usersServices.getAll).toHaveBeenCalled();
-      })
-
-      test('then it should return users', () => {
-        expect(users).toEqual([userStub()])
-      })
+    beforeEach( async () => {
+      user = await usersServices.create(createUserDto, image);
     })
-  })
 
-  describe('createUser', () => {
-    describe('when create user is called' , () => {
-
-      let user:User
-      let createUserDto: CreateUserDto
-
-      beforeEach( async () => {
-        user = await usersServices.create(createUserDto);
-      })
-
-      test('then it should call usersServices' , () => {
-        expect(usersServices.create).toHaveBeenCalledWith(createUserDto)
-      })
-
-      test('then should return a user ', () => {
-        expect(user).toEqual(userStub())
-      })
-
+    test('then it should call usersServices' , () => {
+      expect(usersServices.create).toHaveBeenCalledWith(createUserDto, image)
     })
-  })
 
-  describe('updateUser', () => {
-    describe('when update user is called' , () => {
-
-      let user:User
-      let updateUserDto: any = {
-        favoriteBrands: ['coca-cola']
-      }
-
-      beforeEach( async () => {
-        user = await usersServices.update(userStub().userUuid, updateUserDto);
-      })
-
-      test('then it should call usersServices' , () => {
-        expect(usersServices.update).toHaveBeenCalledWith(userStub().userUuid, updateUserDto)
-      })
-
-      test('then should return a user ', () => {
-        expect(user).toEqual(userStub())
-      })
-
+    test('then should return a user ', () => {
+      expect(user).toEqual(userStub())
     })
+
   })
+})
+ 
+describe('deleteUser' , () => {
 
-  describe('deleteUser' , () => {
+  describe('when delete user is called' , () => {
+    let result: any = {
+      userDeleted: true,
+      avatarDeletd: true
+    }
 
-    describe('when delete user is called' , () => {
-      let result: boolean
-
-      beforeEach( async () => {
-        result = await usersServices.delete(userStub().userUuid);
-      })
-
-      test('then it should call usersServices' , () => {
-        expect(usersServices.delete).toHaveBeenCalledWith(userStub().userUuid)
-      })
-
-      test('then shold return true', () => {
-        expect(result).toEqual(true)
-      })
-
+    beforeEach( async () => {
+      result = await usersServices.delete(userStub().id);
     })
-  })
 
-});
+    test('then it should call usersServices' , () => {
+      expect(usersServices.delete).toHaveBeenCalledWith(userStub().id)
+    })
+
+    test('then shold return true', () => {
+      expect(result.userDeleted).toEqual(true)
+      expect(result.avatarDeletd).toEqual(true)
+    })
+
+  })
+})
+})
