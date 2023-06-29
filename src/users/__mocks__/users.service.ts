@@ -6,5 +6,8 @@ export const UsersService = jest.fn().mockReturnValue({
     create: jest.fn().mockResolvedValue(userStub()),
     update: jest.fn().mockResolvedValue(userStub()),
     getAll: jest.fn().mockResolvedValue([userStub()]),
-    delete: jest.fn().mockResolvedValue(true),
+    delete: jest.fn().mockResolvedValue({
+        userDeleted: true,
+        avatarDeletd: true
+    }),
 })
