@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsArray, IsEmail, IsIn, IsNotEmpty, Matches } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { IsEmail, IsNotEmpty } from 'class-validator'
 
 
 export class CreateUserDto 
@@ -10,12 +10,14 @@ export class CreateUserDto
     email: string;
 
     @IsNotEmpty()
-    // @Matches(new RegExp(/([0-9][0-9][0-9][0-9][0-9])/), {message:'Password should have only numbers and at least size = 5'})
-    @ApiProperty({default:'passwordTest'})
-    password: string;
+    @ApiProperty({default:'Fabio'})
+    first_name: string;
 
     @IsNotEmpty()
-    @IsArray()
-    @ApiProperty({default:['nike']})
-    favoriteBrands: string[];
+    @ApiProperty({default:'Santos'})
+    last_name: string;
+
+    @IsNotEmpty()
+    @ApiProperty({default:"https://reqres.in/img/faces/1-image.jpg"})
+    avatar: string;
 }
