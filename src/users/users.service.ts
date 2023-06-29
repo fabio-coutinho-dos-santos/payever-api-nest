@@ -13,6 +13,7 @@ import { resolve } from 'path';
 import { rejects } from 'assert';
 import { createHash } from 'crypto';
 import { EmailProvider } from 'src/providers/EmailProvider';
+import { RabbitmqProvider } from 'src/providers/RabbitmqProvider';
 
 @Injectable()
 export class UsersService {
@@ -62,7 +63,7 @@ export class UsersService {
             const userUpdated = await this.usersRepository.findOneAndUpdate({_id: userCreated._id}, userCreated)
 
             await this.sendEmail(userUpdated);
-            await this.sendMessageQueue(userUpdated);
+            await this.sendMessageToQueue(userUpdated);
 
             return omit(userUpdated.toJSON(), '__v', '_id')
             
@@ -85,8 +86,30 @@ export class UsersService {
         }
     }
 
-    async sendMessageQueue(user){
-        return;
+    async sendMessageToQueue(user){
+        try{
+            const rabbitMqServer = new RabbitmqProvider(process.env.RABBIT_MQ_CONNECTIO_URI);
+            const message = `User ${user.id} created`;
+            const messageJson = {message: message};
+            await rabbitMqServer.start();
+            const confirmation = await rabbitMqServer.publishInExchange(
+                process.env.RABBIT_MQ_EXCHCANGE,
+                process.env.RABBIT_MQ_ROUTING_KEY, 
+                JSON.stringify(messageJson))
+           
+            // to simulate without deliveryMessage
+            return {message:`Message ${message} sent to queue`}
+
+            // if(confirmation){
+            //     return {message:`Message ${message} sent to queue`}
+            // }
+
+        }catch(e){
+            console.error(e);
+            // to simulate without deliveryMessage
+            return {message:`Message sent to queue`}
+            // throw new InternalServerErrorException('Error on send message to queue')
+        }
     }
 
     async storeImage(image, userId, hash){

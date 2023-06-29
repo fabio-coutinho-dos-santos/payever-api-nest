@@ -29,6 +29,8 @@
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.1.4",
+    "@types/amqplib": "^0.10.1",
+    "amqplib": "^0.10.3",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
