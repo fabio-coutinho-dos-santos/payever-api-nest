@@ -25,18 +25,18 @@ export class UsersController {
         return await this.usersService.getById(id)
     }
 
+    @Get(':id/avatar')
+    @ApiOperation({summary:'Get avatar user'})
+    // @ApiResponse({status:200, description: 'User found',type: ShowUserSwagger})
+    // @ApiResponse({status:404, description: 'User not found', type: NotFundSwagger})
+    async getAvatar( @Param('id') id:number ) : Promise<User | unknown> {
+        return await this.usersService.getUserAvatar(id)
+    }
+
     @Post()
     @ApiOperation({summary:'Create a new user'})
     @ApiResponse({status:201, description: 'User created succesfully', type: CreateUserSwagger})
     @ApiResponse({status:400, description: 'Invalid Parameters', type: BadRequestSwagger})
-    // @UseInterceptors(FileInterceptor('image', {
-    //     storage: diskStorage({
-    //         destination: "./uploads",
-    //         filename: (req, file, cb) => {
-    //             cb(null, `${file.originalname}`)
-    //         }
-    //     })
-    // }))
     @UseInterceptors(FileInterceptor('image'))
     async create ( @Body() body, @UploadedFile() image: Express.Multer.File ) : Promise <User> {
         return await this.usersService.create(body, image);
