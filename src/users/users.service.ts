@@ -23,7 +23,6 @@ export class UsersService {
 
 
     async getById(id: number){
-
         try{
             const user = await this.usersRepository.findOne({id});
             if(!user) throw new NotFoundException(MessageHelper.USER_NOT_FOUND_MESSSAGE);
@@ -74,7 +73,7 @@ export class UsersService {
             return omit(userUpdated.toJSON(), '__v', '_id')
             
         }catch(e){
-            console.log(e);
+            console.error(e);
             throw new InternalServerErrorException(MessageHelper.ERROR_ON_CREATE_NEW_USER_MESSAGE)
         }
     }
@@ -92,7 +91,11 @@ export class UsersService {
 
     private getNextId(lastUser){
         if(lastUser){
-            return lastUser.id + 1;
+            if(lastUser < this.NEXT_INDEX_AFTER_REQURES_REGISTERS){
+                return this.NEXT_INDEX_AFTER_REQURES_REGISTERS
+            }else{
+                return lastUser.id + 1;
+            }
         }else{
             return this.NEXT_INDEX_AFTER_REQURES_REGISTERS;
         }
@@ -106,7 +109,7 @@ export class UsersService {
             return await emailProvider.sendEmail(transporter);
         }
         catch(e){
-            console.log(e)
+            console.error(e)
             // to simulate without send email
             return true
             // throw new InternalServerErrorException('Error sending email');
@@ -197,6 +200,7 @@ export class UsersService {
 
     async getAvatarUserFromReqresServer(id){
         const user = await this.getUserInReqresServer(id)
+        console.log(user);
         const hash = this.buildHash(user.id.toString());
         const avatarPath = user.avatar;
         user.avatar = user.id + '-' + hash;
@@ -210,7 +214,7 @@ export class UsersService {
                 const base64String = imageLocal.toString('base64');
                 return {avatarContent: base64String};
             }catch(e){
-                console.log(e)
+                console.error(e)
                 throw new InternalServerErrorException(MessageHelper.INTERNAL_SERVER_ERROR_MESSAGE)
             }
         }
