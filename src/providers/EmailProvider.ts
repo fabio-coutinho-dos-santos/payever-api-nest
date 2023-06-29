@@ -18,7 +18,7 @@ export class EmailProvider
           }
           resolve(responseObject);
         }).catch(error => {
-
+          console.error(error)
           // this line was commented for simulate the positive return
           // reject(error); 
           resolve(true)
