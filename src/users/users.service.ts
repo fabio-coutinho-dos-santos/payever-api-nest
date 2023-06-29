@@ -18,9 +18,11 @@ import { RabbitmqProvider } from 'src/providers/RabbitmqProvider';
 @Injectable()
 export class UsersService {
 
+    private NEXT_INDEX_AFTER_REQURES_REGISTERS=13
+
     constructor(
         private readonly usersRepository: UsersRepository,
-        ){}
+    ){}
 
 
     async getById(id: number){
@@ -52,7 +54,9 @@ export class UsersService {
 
     async create(user:User, image: Express.Multer.File){
         try{
-            user.id = Math.floor(Math.random() * (10000000000 - 1 + 1)) + 1;
+            const lastUser: any = await this.usersRepository.findLast();
+            user.id = this.getNextId(lastUser)
+
             const userCreated = await this.usersRepository.create(user)
            
             const hash = this.buildHash(userCreated._id.toString());
@@ -73,6 +77,14 @@ export class UsersService {
         }
     }
 
+    private getNextId(lastUser){
+        if(lastUser){
+            return lastUser.id + 1;
+        }else{
+            return this.NEXT_INDEX_AFTER_REQURES_REGISTERS;
+        }
+    }
+
     async sendEmail(user)
     {
         const emailProvider = new EmailProvider(user)
@@ -82,7 +94,9 @@ export class UsersService {
         }
         catch(e){
             console.log(e)
-            throw new InternalServerErrorException('Error sending email');
+            // to simulate without send email
+            return true
+            // throw new InternalServerErrorException('Error sending email');
         }
     }
 
@@ -106,7 +120,7 @@ export class UsersService {
 
         }catch(e){
             console.error(e);
-            // to simulate without deliveryMessage
+            // to simulate without delivery Message
             return {message:`Message sent to queue`}
             // throw new InternalServerErrorException('Error on send message to queue')
         }
