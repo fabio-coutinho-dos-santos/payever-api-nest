@@ -1,19 +1,12 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { User, UserDocument } from './schema/user.schema'
-import { hashSync } from 'bcrypt'
-import { v4 as uuidv4 } from 'uuid'
+import { User } from './schema/user.schema'
 import { UsersRepository } from './users.repository';
-import { Model, PaginateOptions, PaginateModel } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
 import { omit } from 'lodash'
 import axios from 'axios';
-import { diskStorage } from 'multer';
 import * as fs from 'fs';
-import { resolve } from 'path';
-import { rejects } from 'assert';
 import { createHash } from 'crypto';
-import { EmailProvider } from 'src/providers/EmailProvider';
-import { RabbitmqProvider } from 'src/providers/RabbitmqProvider';
+import { EmailProvider } from '../providers/EmailProvider';
+import { RabbitmqProvider } from '../providers/RabbitmqProvider';
 
 @Injectable()
 export class UsersService {

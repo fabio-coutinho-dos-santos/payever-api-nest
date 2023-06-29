@@ -5,6 +5,7 @@ import { User } from '../schema/user.schema';
 import { UsersController } from '../users.controller';
 import { UsersService } from '../users.service';
 import { userStub } from './stubs/user.stub';
+import { avatarStub } from './stubs/avatar.stub';
 
 jest.mock('../users.service');
 
@@ -41,6 +42,23 @@ describe('UsersController', () => {
     })
 })
 
+describe('getUserAvatar', () => {
+  describe('when getUserAvatar is called', () => {
+
+    let avatarContent: any;
+    beforeEach(async () => {
+      avatarContent = await usersController.getAvatar(userStub().id)
+    })
+
+    test('then it should call usersService', () => {
+      expect(usersServices.getUserAvatar).toBeCalledWith(userStub().id);
+    })
+
+    test('then should a content in base64', () => {
+      expect(avatarContent).toEqual(avatarStub)
+    })
+  })
+})
 
 describe('createUser', () => {
   describe('when create user is called' , () => {
