@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { User } from './schema/user.schema'
 import { UsersRepository } from './users.repository';
 import { omit } from 'lodash'
@@ -16,6 +16,9 @@ export class UsersService {
     private ERROR_ON_GET_USER_AVATAR = 'Error on get user avatar'
     private INTERNAL_SERVER_ERROR_MESSAGE = 'Internal Server Error'
     private ERROR_ON_CREATE_NEW_USER_MESSAGE = 'Error on create a new user'
+    private BAD_REQUEST_IMAGE = 'An image must be uploaded'
+    private BAD_REQUEST_FIELDS = 'email, first_name and last_name are required fields'
+    private EMAIL_USED = 'This email is already in use'
     private REQRES_BASE_URL = 'https://reqres.in/api/users'
     private UPLOAD_FOLDER_PATH = './uploads';
     private STATUS_CODE_NOT_FOUND = 404;
@@ -52,6 +55,12 @@ export class UsersService {
     }
 
     async create(user:User, image: Express.Multer.File){
+        if(!image){
+            throw new BadRequestException(this.BAD_REQUEST_IMAGE)
+        }
+
+        await this.validateUserSchema(user);
+        
         try{
             const lastUser: any = await this.usersRepository.findLast();
             user.id = this.getNextId(lastUser)
@@ -73,6 +82,17 @@ export class UsersService {
         }catch(e){
             console.log(e);
             throw new InternalServerErrorException(this.ERROR_ON_CREATE_NEW_USER_MESSAGE)
+        }
+    }
+
+    async validateUserSchema(user){
+        if(!user.email || !user.first_name || !user.last_name){
+            throw new BadRequestException(this.BAD_REQUEST_FIELDS);
+        }
+
+        const userStored = await this.usersRepository.findOne({email: user.email})
+        if(userStored){
+            throw new BadRequestException(this.EMAIL_USED);
         }
     }
 

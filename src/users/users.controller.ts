@@ -7,12 +7,10 @@ import { CreateUserSwagger } from './swagger/create-user.swagger';
 import { BadRequestSwagger } from './swagger/bad-request.swagger';
 import { NotFundSwagger } from './swagger/not-found.swagger';
 import { User } from './schema/user.schema';
-import { HttpExceptionFilter } from './filters/http-exception.filters';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 @Controller('api/users')
 @ApiTags('Users')
-@UseFilters(HttpExceptionFilter)
 
 export class UsersController {
     constructor(private readonly usersService:UsersService){}
