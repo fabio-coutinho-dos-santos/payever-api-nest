@@ -4,6 +4,7 @@ import { Connection } from "mongoose"
 import { AppModule } from "../../../app.module"
 import { DatabaseService } from "../../../database/database.service";
 import { userStub } from "../stubs/user.stub";
+jest.setTimeout(15000)
 
 describe('UsersController' , () => {
     

@@ -17,3 +17,5 @@
  - The mongo db instance used is not local, but configured as an Atlas service, and the URI of the application databases and for running the integration tests are described in the .env file
  
  - A swagger documentation of the api routes is generated and can be consulted/used at http://localhost:3000/api/doc
+
+ - To run the tests just run 'npm test'
