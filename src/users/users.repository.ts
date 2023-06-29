@@ -10,4 +10,9 @@ export class UsersRepository extends EntityRepository<UserDocument>
     constructor(@InjectModel(User.name) readonly userModel: Model<UserDocument>){
         super(userModel);
     }
+
+    async findLast(){
+        const lastUser = await this.userModel.find().sort({id:-1}).limit(1).exec()
+        return lastUser[0];
+    }
 }

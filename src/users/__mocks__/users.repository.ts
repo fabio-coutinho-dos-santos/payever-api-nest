@@ -1,15 +1,16 @@
 import { userStub } from "../tests/stubs/user.stub";
-import { hashSync } from 'bcrypt'
 
 let updateUserReponse = {
-    userUuid: userStub().userUuid,
+    id: userStub().id,
     email: userStub().email,
-    favoriteBrands: userStub().favoriteBrands,
-    password: hashSync(userStub().password,10)
+    avatar: userStub().avatar,
+    first_name: userStub().first_name,
+    last_name: userStub().last_name,
 }
 
 export const UsersRepository = jest.fn().mockReturnValue({
     find: jest.fn().mockResolvedValue([userStub()]),
+    findLast: jest.fn().mockResolvedValue(userStub()),
     findOne: jest.fn().mockResolvedValue(userStub()),
     findOneAndUpdate: jest.fn().mockResolvedValue(updateUserReponse),
     create: jest.fn().mockResolvedValue(userStub()),

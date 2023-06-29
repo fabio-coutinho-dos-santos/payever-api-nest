@@ -26,7 +26,7 @@ describe('UsersRepository', () => {
 
             usersRepository = moduleRef.get<UsersRepository>(UsersRepository);
             usersModel = moduleRef.get<UsersModel>(getModelToken(User.name));
-            userfilterQuery = {userUuid: userStub().userUuid}
+            userfilterQuery = {id: userStub().id}
             jest.clearAllMocks()
         })
 
@@ -77,11 +77,11 @@ describe('UsersRepository', () => {
         
                 beforeEach(async () => {
                     jest.spyOn(usersModel, 'findOneAndUpdate');
-                    user = await usersRepository.findOneAndUpdate(userfilterQuery, userStub().favoriteBrands);
+                    user = await usersRepository.findOneAndUpdate(userfilterQuery, userStub().avatar);
                 })
         
                 test('then it should call the userModel', () => {
-                    expect(usersModel.findOneAndUpdate).toHaveBeenCalledWith(userfilterQuery, userStub().favoriteBrands, { new: true });
+                    expect(usersModel.findOneAndUpdate).toHaveBeenCalledWith(userfilterQuery, userStub().avatar, { new: true });
                 })
         
                 test('then it should return a user', () => {
