@@ -6,7 +6,7 @@ export class BadRequestSwagger
     statusCode:number
 
     @ApiProperty()
-    message:string[]
+    message:string
 
     @ApiProperty()
     error:string

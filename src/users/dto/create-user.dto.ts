@@ -6,7 +6,7 @@ export class CreateUserDto
 {
     @IsNotEmpty()
     @IsNumber()
-    @ApiProperty({default:12156542})
+    @ApiProperty({default:13})
     id: number;
 
     @IsNotEmpty()

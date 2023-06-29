@@ -1,22 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, OmitType } from "@nestjs/swagger";
+import { CreateUserDto } from "../dto/create-user.dto";
 
-export class ShowUserSwagger
+export class ShowUserSwagger extends CreateUserDto
 {
-    @ApiProperty()
-    userUuid:string
-
-    @ApiProperty()
-    email:string
-
-    @ApiPropertyOptional()
-    password:string
-
-    @ApiPropertyOptional()
-    favoriteBrands:string[]
-
-    @ApiPropertyOptional()
-    createdAt:string
-
-    @ApiPropertyOptional()
-    updatedAt:string
 }
