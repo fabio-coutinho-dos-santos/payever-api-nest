@@ -12,6 +12,7 @@ import * as fs from 'fs';
 import { resolve } from 'path';
 import { rejects } from 'assert';
 import { createHash } from 'crypto';
+import { EmailProvider } from 'src/providers/EmailProvider';
 
 @Injectable()
 export class UsersService {
@@ -55,11 +56,13 @@ export class UsersService {
            
             const hash = this.buildHash(userCreated._id.toString());
 
-            console.log(image.buffer);
             await this.storeImage(image.buffer, userCreated.id, hash)
 
             userCreated.avatar = userCreated.id + '-' + hash;
             const userUpdated = await this.usersRepository.findOneAndUpdate({_id: userCreated._id}, userCreated)
+
+            await this.sendEmail(userUpdated);
+            await this.sendMessageQueue(userUpdated);
 
             return omit(userUpdated.toJSON(), '__v', '_id')
             
@@ -67,6 +70,23 @@ export class UsersService {
             console.log(e);
             throw new InternalServerErrorException('Error on create a new user')
         }
+    }
+
+    async sendEmail(user)
+    {
+        const emailProvider = new EmailProvider(user)
+        const transporter = emailProvider.configureEmailServer()
+        try{
+            return await emailProvider.sendEmail(transporter);
+        }
+        catch(e){
+            console.log(e)
+            throw new InternalServerErrorException('Error sending email');
+        }
+    }
+
+    async sendMessageQueue(user){
+        return;
     }
 
     async storeImage(image, userId, hash){

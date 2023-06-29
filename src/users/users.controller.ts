@@ -27,8 +27,6 @@ export class UsersController {
 
     @Get(':id/avatar')
     @ApiOperation({summary:'Get avatar user'})
-    // @ApiResponse({status:200, description: 'User found',type: ShowUserSwagger})
-    // @ApiResponse({status:404, description: 'User not found', type: NotFundSwagger})
     async getAvatar( @Param('id') id:number ) : Promise<User | unknown> {
         return await this.usersService.getUserAvatar(id)
     }
