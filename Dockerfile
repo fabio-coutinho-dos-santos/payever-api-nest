@@ -19,6 +19,9 @@ ENV NODE_ENV production
 USER node
 WORKDIR /home/node
 
+RUN mkdir -p /home/node/uploads
+RUN chmod 777 -R /home/node/uploads
+
 COPY --from=builder /home/node/package*.json /home/node/
 COPY --from=builder /home/node/node_modules/ /home/node/node_modules/
 COPY --from=builder /home/node/dist/ /home/node/dist/
