@@ -5,6 +5,8 @@ ENV NODE_ENV build
 WORKDIR /home/node
 
 COPY . /home/node
+RUN mkdir -p /home/node/uploads
+RUN chmod 777 -R /home/node/
 
 RUN npm ci \
     && npm run build \
@@ -20,7 +22,7 @@ USER node
 WORKDIR /home/node
 
 RUN mkdir -p /home/node/uploads
-RUN chmod 777 -R /home/node/uploads
+RUN chmod 777 -R /home/node/
 
 COPY --from=builder /home/node/package*.json /home/node/
 COPY --from=builder /home/node/node_modules/ /home/node/node_modules/
