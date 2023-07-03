@@ -8,6 +8,7 @@ import { createHash } from 'crypto';
 import { EmailProvider } from '../providers/EmailProvider';
 import { RabbitmqProvider } from '../providers/RabbitmqProvider';
 import { MessageHelper } from '../helpers/messages.helper';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,7 @@ export class UsersService {
 
     constructor(
         private readonly usersRepository: UsersRepository,
+        private readonly mailService: MailService
     ){}
 
 
@@ -83,10 +85,10 @@ export class UsersService {
             throw new BadRequestException(MessageHelper.BAD_REQUEST_FIELDS);
         }
 
-        const userStored = await this.usersRepository.findOne({email: user.email})
-        if(userStored){
-            throw new BadRequestException(MessageHelper.EMAIL_USED);
-        }
+        // const userStored = await this.usersRepository.findOne({email: user.email})
+        // if(userStored){
+        //     throw new BadRequestException(MessageHelper.EMAIL_USED);
+        // }
     }
 
     private getNextId(lastUser){
@@ -106,7 +108,7 @@ export class UsersService {
         const emailProvider = new EmailProvider(user)
         const transporter = emailProvider.configureEmailServer()
         try{
-            return await emailProvider.sendEmail(transporter);
+            await this.mailService.sendEmail(user)
         }
         catch(e){
             console.error(e)
@@ -114,6 +116,7 @@ export class UsersService {
             return true
             // throw new InternalServerErrorException('Error sending email');
         }
+
     }
 
     async sendMessageToQueue(user){

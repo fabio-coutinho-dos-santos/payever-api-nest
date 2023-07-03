@@ -1,0 +1,37 @@
+# version: '3.8'
+# services:
+#   api:
+#     container_name: "hrm_api_${NODE_ENV}"
+#     image: "hrm_api_${NODE_ENV}"
+#     environment:
+#       - NODE_ENV:${NODE_ENV}
+#     build:
+#       context: ./app
+#       target: "${NODE_ENV}"
+#       dockerfile: Dockerfile
+#     entrypoint: ["npm", "run", "start:${NODE_ENV}"]
+#     env_file:
+#       - .env
+#     ports:
+#       - 9229:9229
+#     networks:
+#       - nesjs-network
+#     volumes:
+#       - ./app:/usr/src/app
+#       - /usr/src/app/node_modules
+#     restart: unless-stopped
+# networks:
+#   payever-test-api_default
+
+version: '3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
