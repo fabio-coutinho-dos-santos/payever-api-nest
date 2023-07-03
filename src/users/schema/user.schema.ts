@@ -1,15 +1,21 @@
-import { InjectModel, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
-import * as mongoosePaginate from 'mongoose-paginate-v2';
+import * as mongooseSequence from 'mongoose-sequence';
+import * as mongoose from 'mongoose';
+
+const AutoIncrement = mongooseSequence(mongoose);
+
 
 export type UserDocument = User & Document
+export type UserModel = mongoose.Model<User>;
+
 @Schema()
 export class User
 {
-    @Prop({unique:true})
+    @Prop({unique: true})
     id: number;
 
-    @Prop({required: true, unique: true})
+    @Prop({required: true})
     email: string;
 
     @Prop({required: true})
@@ -24,8 +30,4 @@ export class User
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-// UserSchema.virtual('autoIncrement').get(function () {
-//     return this.id;
-// });
 
-UserSchema.plugin(mongoosePaginate);

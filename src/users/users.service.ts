@@ -12,7 +12,7 @@ import { RabbitmqService } from 'src/rabbitmq/rabbitmq.service';
 @Injectable()
 export class UsersService {
 
-    private NEXT_INDEX_AFTER_REQURES_REGISTERS = 13
+    private FIRST_ID = 1
     private REQRES_BASE_URL = 'https://reqres.in/api/users'
     private UPLOAD_FOLDER_PATH = './uploads';
     private STATUS_CODE_NOT_FOUND = 404;
@@ -93,13 +93,9 @@ export class UsersService {
 
     private getNextId(lastUser){
         if(lastUser){
-            if(lastUser < this.NEXT_INDEX_AFTER_REQURES_REGISTERS){
-                return this.NEXT_INDEX_AFTER_REQURES_REGISTERS
-            }else{
-                return lastUser.id + 1;
-            }
+            return lastUser.id + 1;
         }else{
-            return this.NEXT_INDEX_AFTER_REQURES_REGISTERS;
+            return this.FIRST_ID;
         }
     }
 
