@@ -18,4 +18,6 @@
  
  - A swagger documentation of the api routes is generated and can be consulted/used at http://localhost:3000/api/doc
 
+ - O production version was deployed using docker and is running at https://payever-api-docker.onrender.com/
+
  - To run the tests just run 'npm test'

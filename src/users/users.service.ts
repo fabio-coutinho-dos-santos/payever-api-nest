@@ -5,9 +5,9 @@ import { omit } from 'lodash'
 import axios from 'axios';
 import * as fs from 'fs';
 import { createHash } from 'crypto';
-import { EmailProvider } from '../providers/EmailProvider';
-import { RabbitmqProvider } from '../providers/RabbitmqProvider';
 import { MessageHelper } from '../helpers/messages.helper';
+import { MailService } from 'src/mail/mail.service';
+import { RabbitmqService } from 'src/rabbitmq/rabbitmq.service';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +19,8 @@ export class UsersService {
 
     constructor(
         private readonly usersRepository: UsersRepository,
+        private readonly mailService: MailService,
+        private readonly rabbitmqService: RabbitmqService
     ){}
 
 
@@ -83,10 +85,10 @@ export class UsersService {
             throw new BadRequestException(MessageHelper.BAD_REQUEST_FIELDS);
         }
 
-        const userStored = await this.usersRepository.findOne({email: user.email})
-        if(userStored){
-            throw new BadRequestException(MessageHelper.EMAIL_USED);
-        }
+        // const userStored = await this.usersRepository.findOne({email: user.email})
+        // if(userStored){
+        //     throw new BadRequestException(MessageHelper.EMAIL_USED);
+        // }
     }
 
     private getNextId(lastUser){
@@ -103,10 +105,8 @@ export class UsersService {
 
     async sendEmail(user)
     {
-        const emailProvider = new EmailProvider(user)
-        const transporter = emailProvider.configureEmailServer()
         try{
-            return await emailProvider.sendEmail(transporter);
+            await this.mailService.sendEmail(user)
         }
         catch(e){
             console.error(e)
@@ -118,11 +118,10 @@ export class UsersService {
 
     async sendMessageToQueue(user){
         try{
-            const rabbitMqServer = new RabbitmqProvider(process.env.RABBIT_MQ_CONNECTIO_URI);
+            await this.rabbitmqService.start(process.env.RABBIT_MQ_CONNECTIO_URI)
             const message = `User ${user.id} created`;
             const messageJson = {message: message};
-            await rabbitMqServer.start();
-            const confirmation = await rabbitMqServer.publishInExchange(
+            const confirmation = await this.rabbitmqService.publishInExchange(
                 process.env.RABBIT_MQ_EXCHCANGE,
                 process.env.RABBIT_MQ_ROUTING_KEY, 
                 JSON.stringify(messageJson))
@@ -131,6 +130,7 @@ export class UsersService {
             return {message:`Message ${message} sent to queue`}
 
             // if(confirmation){
+            //     console.log({message:`Message ${message} sent to queue`})
             //     return {message:`Message ${message} sent to queue`}
             // }
 
