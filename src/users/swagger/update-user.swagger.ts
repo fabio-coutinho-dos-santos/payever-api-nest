@@ -1,3 +1,3 @@
-import { CreateUserSwagger } from "./create-user.swagger";
+import { CreateUserSwagger } from './create-user.swagger';
 
-export class UpdateUserSwagger extends CreateUserSwagger{}
+export class UpdateUserSwagger extends CreateUserSwagger {}

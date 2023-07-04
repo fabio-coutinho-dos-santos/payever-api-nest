@@ -1,7 +1,6 @@
-import { ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
-export class UserQueryDto
-{
-    @ApiPropertyOptional()
-    email?: string;
+export class UserQueryDto {
+  @ApiPropertyOptional()
+  email?: string;
 }

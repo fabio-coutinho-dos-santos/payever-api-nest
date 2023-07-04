@@ -1,7 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
-export class GetAvatarSwagger
-{
-    @ApiProperty({default:'fasdkufajdjfaijdfajdflajf...'})
-    avatarContent:string
+export class GetAvatarSwagger {
+  @ApiProperty({ default: 'fasdkufajdjfaijdfajdflajf...' })
+  avatarContent: string;
 }
